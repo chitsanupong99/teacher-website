@@ -48,43 +48,28 @@ export default function Classrooms() {
     if (!form.name) return
     setError('')
 
-    const payload: Record<string, any> = { name: form.name }
-    if (form.subject_ids.length > 0) {
-      payload.subject_ids = form.subject_ids
-    } else if (form.subject_id) {
-      payload.subject_id = form.subject_id
-    }
+  const payload = { 
+  name: form.name,
+  subject_id: form.subject_id || null
+}
 
-    try {
-      let result
-      if (editItem) {
-        result = await supabase.from('classrooms').update(payload).eq('id', editItem.id)
-      } else {
-        result = await supabase.from('classrooms').insert(payload)
-      }
-      if (result.error) throw result.error
-      setShowModal(false)
-      setForm({ name: '', subject_id: '', subject_ids: [] })
-      setEditItem(null)
-      fetchData()
-    } catch (err: any) {
-      const message = err?.message || JSON.stringify(err)
-      console.error('Error saving classroom:', message)
-      setError(message || 'ไม่สามารถบันทึกห้องเรียนได้ โปรดตรวจสอบสิทธิ์และ schema ของฐานข้อมูล')
-    }
+try {
+  if (editItem) {
+    const { error } = await supabase.from('classrooms').update(payload).eq('id', editItem.id)
+    if (error) throw error
+  } else {
+    const { error } = await supabase.from('classrooms').insert(payload)
+    if (error) throw error
   }
-
   const handleDelete = async (id: string) => {
     if (!confirm('ยืนยันการลบห้องเรียนนี้?')) return
     setError('')
 
     try {
-      // ลบข้อมูลที่เกี่ยวข้องก่อน เพื่อไม่ให้เกิด foreign key constraint
-      await supabase.from('attendance').delete().eq('classroom_id', id)
-      await supabase.from('students').delete().eq('classroom_id', id)
-
-      const { error } = await supabase.from('classrooms').delete().eq('id', id)
-      if (error) throw error
+      const response = await fetch(`/api/classrooms?id=${id}`, {
+        method: 'DELETE',
+      })
+      if (!response.ok) throw new Error(await response.text())
       fetchData()
     } catch (err: any) {
       const message = err?.message || JSON.stringify(err)
@@ -264,15 +249,10 @@ export default function Classrooms() {
               <label className="form-label">วิชา</label>
               <select
                 className="form-input"
-                multiple
-                value={form.subject_ids}
-                onChange={e => {
-                  const selected: string[] = []
-                  Array.from(e.target.selectedOptions).forEach(option => selected.push(option.value))
-                  setForm({ ...form, subject_ids: selected, subject_id: selected[0] ?? '' })
-                }}
-              >
-                {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                value={form.subject_id}
+                onChange={e => setForm({ ...form, subject_id: e.target.value })}
+>
+                <option value="">-- เลือกวิชา --</option>
               </select>
               <div style={{ marginTop: 8, fontSize: 13, color: '#6b7280' }}>กด Ctrl/Cmd เพื่อเลือกหลายวิชา</div>
             </div>
