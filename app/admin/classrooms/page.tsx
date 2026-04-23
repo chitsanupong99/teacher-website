@@ -45,22 +45,36 @@ export default function Classrooms() {
   }
 
   const handleSave = async () => {
-    if (!form.name) return
-    setError('')
+  if (!form.name) return
+  setError('')
 
-  const payload = { 
-  name: form.name,
-  subject_id: form.subject_id || null
-}
+  try {
+    const payload = {
+      name: form.name,
+      subject_id: form.subject_id || null
+    }
 
-try {
-  if (editItem) {
-    const { error } = await supabase.from('classrooms').update(payload).eq('id', editItem.id)
-    if (error) throw error
-  } else {
-    const { error } = await supabase.from('classrooms').insert(payload)
-    if (error) throw error
+    if (editItem) {
+      const { error } = await supabase
+        .from('classrooms')
+        .update(payload)
+        .eq('id', editItem.id)
+      if (error) throw error
+    } else {
+      const { error } = await supabase
+        .from('classrooms')
+        .insert(payload)
+      if (error) throw error
+    }
+
+    setShowModal(false)
+    setForm({ name: '', subject_id: '', subject_ids: [] })
+    setEditItem(null)
+    fetchData()
+  } catch (err: any) {
+    setError(err?.message || 'ไม่สามารถบันทึกได้')
   }
+}
   const handleDelete = async (id: string) => {
     if (!confirm('ยืนยันการลบห้องเรียนนี้?')) return
     setError('')
@@ -247,12 +261,12 @@ try {
             </div>
             <div className="form-group">
               <label className="form-label">วิชา</label>
-              <select
-                className="form-input"
-                value={form.subject_id}
-                onChange={e => setForm({ ...form, subject_id: e.target.value })}
+             <select
+  className="form-input"
+  value={form.subject_id}
+  onChange={e => setForm({ ...form, subject_id: e.target.value })}
 >
-                <option value="">-- เลือกวิชา --</option>
+  <option value="">-- เลือกวิชา --</option>
               </select>
               <div style={{ marginTop: 8, fontSize: 13, color: '#6b7280' }}>กด Ctrl/Cmd เพื่อเลือกหลายวิชา</div>
             </div>
