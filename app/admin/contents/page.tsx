@@ -234,7 +234,8 @@ export default function ContentsPage() {
       onChange={async (e) => {
         const file = e.target.files?.[0]
         if (!file) return
-        const fileName = `${Date.now()}_${file.name}`
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Date.now()}.${fileExt}`
         const { error } = await supabase.storage.from('documents').upload(fileName, file)
         if (error) { alert('อัปโหลดไม่สำเร็จ: ' + error.message); return }
         const { data: urlData } = supabase.storage.from('documents').getPublicUrl(fileName)
