@@ -223,9 +223,36 @@ export default function ContentsPage() {
               <textarea className="form-input" placeholder="รายละเอียดเพิ่มเติม..." value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
             </div>
             <div className="form-group">
-              <label className="form-label">ลิงก์ (URL)</label>
-              <input className="form-input" placeholder="https://..." value={form.url} onChange={e => setForm({ ...form, url: e.target.value })} />
-            </div>
+  <label className="form-label">ไฟล์หรือลิงก์</label>
+  <input className="form-input" placeholder="https://... (หรืออัปโหลดไฟล์ด้านล่าง)" value={form.url} onChange={e => setForm({ ...form, url: e.target.value })} />
+  <div style={{ marginTop: 8 }}>
+    <input
+      type="file"
+      id="content-upload"
+      accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png"
+      style={{ display: 'none' }}
+      onChange={async (e) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        const fileName = `${Date.now()}_${file.name}`
+        const { error } = await supabase.storage.from('documents').upload(fileName, file)
+        if (error) { alert('อัปโหลดไม่สำเร็จ: ' + error.message); return }
+        const { data: urlData } = supabase.storage.from('documents').getPublicUrl(fileName)
+        setForm({ ...form, url: urlData.publicUrl })
+      }}
+    />
+    <label htmlFor="content-upload" style={{
+      display: 'inline-flex', alignItems: 'center', gap: 8,
+      padding: '8px 16px', background: '#eef2ff', color: '#6366f1',
+      borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600
+    }}>
+      📎 อัปโหลดไฟล์
+    </label>
+    {form.url && form.url.includes('supabase') && (
+      <span style={{ marginLeft: 8, fontSize: 12, color: '#16a34a' }}>✅ อัปโหลดสำเร็จ</span>
+    )}
+  </div>
+</div>
             <div className="form-group">
               <label className="form-label">วิชา</label>
               <select className="form-input" value={form.subject_id} onChange={e => setForm({ ...form, subject_id: e.target.value })}>
