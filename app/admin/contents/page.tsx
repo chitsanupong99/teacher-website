@@ -36,17 +36,29 @@ export default function ContentsPage() {
   }
 
   const handleSave = async () => {
-    if (!form.title) return
-    if (editItem) {
-      await supabase.from('contents').update(form).eq('id', editItem.id)
-    } else {
-      await supabase.from('contents').insert(form)
-    }
-    setShowModal(false)
-    setForm({ title: '', description: '', type: 'ใบงาน', url: '', subject_id: '' })
-    setEditItem(null)
-    fetchData()
+  if (!form.title) return
+  
+  const payload = {
+    title: form.title,
+    description: form.description || null,
+    type: form.type || null,
+    url: form.url || null,
+    subject_id: form.subject_id || null,
   }
+
+  if (editItem) {
+    const { error } = await supabase.from('contents').update(payload).eq('id', editItem.id)
+    if (error) { alert('บันทึกไม่สำเร็จ: ' + error.message); return }
+  } else {
+    const { error } = await supabase.from('contents').insert(payload)
+    if (error) { alert('บันทึกไม่สำเร็จ: ' + error.message); return }
+  }
+
+  setShowModal(false)
+  setForm({ title: '', description: '', type: 'ใบงาน', url: '', subject_id: '' })
+  setEditItem(null)
+  fetchData()
+}
 
   const handleDelete = async (id: string) => {
     if (!confirm('ยืนยันการลบรายการนี้?')) return
