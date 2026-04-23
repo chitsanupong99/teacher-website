@@ -19,6 +19,7 @@ interface NavbarProps {
 export default function Navbar({ router, onShowProfileModal }: NavbarProps) {
   const [settings, setSettings] = useState<SiteSettings | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const defaultRouter = useRouter()
   const activeRouter = router || defaultRouter
 
@@ -88,223 +89,319 @@ export default function Navbar({ router, onShowProfileModal }: NavbarProps) {
   }
 
   return (
-    <div
-      className="navbar"
-      style={{
-        background: `rgba(${hexToRgb(settings.nav_color)}, 0.85)`,
-        backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(99,102,241,0.1)',
-        padding: '0 40px',
-        height: '68px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        position: 'sticky',
-        top: 0,
-        zIndex: 50,
-        boxShadow: '0 4px 24px rgba(99,102,241,0.08)'
-      }}
-    >
-      <div className="nav-logo" style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-        <div
-          className="nav-logo-icon"
-          style={{
-            width: '40px',
-            height: '40px',
-            background: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '20px',
-            boxShadow: '0 4px 12px rgba(99,102,241,0.3)',
-            color: settings.nav_text_color
-          }}
-        >
-          {settings.logo_url ? (
-            <img
-              src={settings.logo_url}
-              alt="Logo"
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: '12px',
-                objectFit: 'cover'
-              }}
-            />
-          ) : (
-            settings.logo_emoji
-          )}
+    <>
+      <style>{`
+        @media (max-width: 768px) {
+          .nav-hamburger {
+            display: flex !important;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.2s;
+          }
+          .nav-hamburger:hover {
+            border-color: rgba(99,102,241,0.6);
+            background: rgba(99,102,241,0.1);
+          }
+          .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 68px;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 16px 20px;
+            z-index: 40;
+            border-bottom: 1px solid rgba(99,102,241,0.1);
+            flex-direction: column;
+            gap: 8px;
+          }
+          .mobile-menu.open {
+            display: flex;
+          }
+          .mobile-menu a,
+          .mobile-menu button {
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            text-align: left;
+            background: transparent;
+            cursor: pointer;
+            color: #4b5563;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-family: 'Sarabun', sans-serif;
+          }
+          .mobile-menu a:hover,
+          .mobile-menu button:hover {
+            background: #f0f2ff;
+            color: #6366f1;
+          }
+          .mobile-menu .nav-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            min-width: unset;
+          }
+        }
+      `}</style>
+
+      <div
+        className="navbar"
+        style={{
+          background: `rgba(${hexToRgb(settings.nav_color)}, 0.85)`,
+          backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(99,102,241,0.1)',
+          padding: '0 40px',
+          height: '68px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          boxShadow: '0 4px 24px rgba(99,102,241,0.08)'
+        }}
+      >
+        <div className="nav-logo" style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+          <div
+            className="nav-logo-icon"
+            style={{
+              width: '40px',
+              height: '40px',
+              background: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px',
+              boxShadow: '0 4px 12px rgba(99,102,241,0.3)',
+              color: settings.nav_text_color
+            }}
+          >
+            {settings.logo_url ? (
+              <img
+                src={settings.logo_url}
+                alt="Logo"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '12px',
+                  objectFit: 'cover'
+                }}
+              />
+            ) : (
+              settings.logo_emoji
+            )}
+          </div>
+          <span
+            className="nav-logo-text"
+            style={{
+              fontFamily: "'Prompt', sans-serif",
+              fontSize: '18px',
+              fontWeight: '700',
+              color: settings.nav_text_color
+            }}
+          >
+            {settings.site_name}
+          </span>
         </div>
-        <span
-          className="nav-logo-text"
-          style={{
-            fontFamily: "'Prompt', sans-serif",
-            fontSize: '18px',
-            fontWeight: '700',
-            color: settings.nav_text_color
-          }}
-        >
-          {settings.site_name}
-        </span>
-      </div>
-      <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <a
-          href="#announcements"
-          className="nav-link"
-          style={{
-            padding: '10px 16px',
-            borderRadius: '12px',
-            fontSize: '14px',
-            fontWeight: '500',
-            color: settings.nav_text_color,
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            textDecoration: 'none',
-            border: '1px solid transparent',
-            background: 'rgba(255,255,255,0.9)',
-            fontFamily: "'Sarabun', sans-serif",
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}
-        >
-          ประกาศ
-        </a>
-        <a
-          href="#contents"
-          className="nav-link"
-          style={{
-            padding: '10px 16px',
-            borderRadius: '12px',
-            fontSize: '14px',
-            fontWeight: '500',
-            color: settings.nav_text_color,
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            textDecoration: 'none',
-            border: '1px solid transparent',
-            background: 'rgba(255,255,255,0.9)',
-            fontFamily: "'Sarabun', sans-serif",
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}
-        >
-          เนื้อหา
-        </a>
-        <a
-          href="#gallery"
-          className="nav-link"
-          style={{
-            padding: '10px 16px',
-            borderRadius: '12px',
-            fontSize: '14px',
-            fontWeight: '500',
-            color: settings.nav_text_color,
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            textDecoration: 'none',
-            border: '1px solid transparent',
-            background: 'rgba(255,255,255,0.9)',
-            fontFamily: "'Sarabun', sans-serif",
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}
-        >
-          Gallery
-        </a>
-        <a
-          href="#contact"
-          className="nav-link"
-          style={{
-            padding: '10px 16px',
-            borderRadius: '12px',
-            fontSize: '14px',
-            fontWeight: '500',
-            color: settings.nav_text_color,
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            textDecoration: 'none',
-            border: '1px solid transparent',
-            background: 'rgba(255,255,255,0.9)',
-            fontFamily: "'Sarabun', sans-serif",
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}
-        >
-          ติดต่อ
-        </a>
+
+        {/* Desktop Menu */}
+        <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <a
+            href="#announcements"
+            className="nav-link"
+            style={{
+              padding: '10px 16px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: settings.nav_text_color,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              textDecoration: 'none',
+              border: '1px solid transparent',
+              background: 'rgba(255,255,255,0.9)',
+              fontFamily: "'Sarabun', sans-serif",
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            ประกาศ
+          </a>
+          <a
+            href="#contents"
+            className="nav-link"
+            style={{
+              padding: '10px 16px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: settings.nav_text_color,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              textDecoration: 'none',
+              border: '1px solid transparent',
+              background: 'rgba(255,255,255,0.9)',
+              fontFamily: "'Sarabun', sans-serif",
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            เนื้อหา
+          </a>
+          <a
+            href="#gallery"
+            className="nav-link"
+            style={{
+              padding: '10px 16px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: settings.nav_text_color,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              textDecoration: 'none',
+              border: '1px solid transparent',
+              background: 'rgba(255,255,255,0.9)',
+              fontFamily: "'Sarabun', sans-serif",
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            Gallery
+          </a>
+          <a
+            href="#contact"
+            className="nav-link"
+            style={{
+              padding: '10px 16px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: settings.nav_text_color,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              textDecoration: 'none',
+              border: '1px solid transparent',
+              background: 'rgba(255,255,255,0.9)',
+              fontFamily: "'Sarabun', sans-serif",
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            ติดต่อ
+          </a>
+          <button
+            className="nav-link"
+            onClick={() => onShowProfileModal && onShowProfileModal()}
+            style={{
+              padding: '10px 16px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: settings.nav_text_color,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              textDecoration: 'none',
+              border: '1px solid transparent',
+              background: 'rgba(255,255,255,0.9)',
+              fontFamily: "'Sarabun', sans-serif",
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            👤 โปรไฟล์ครู
+          </button>
+          <button
+            className="nav-btn"
+            onClick={() => activeRouter.push('/student')}
+            style={{
+              padding: '10px 22px',
+              borderRadius: '14px',
+              fontSize: '14px',
+              fontWeight: '600',
+              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+              color: '#fff',
+              cursor: 'pointer',
+              border: 'none',
+              fontFamily: "'Sarabun', sans-serif",
+              transition: 'all 0.2s',
+              boxShadow: '0 4px 12px rgba(99,102,241,0.35)',
+              minWidth: '190px'
+            }}
+          >
+            🔍 ตรวจสอบผลการเรียน
+          </button>
+          <button
+            className="nav-secret-btn"
+            onClick={() => activeRouter.push('/admin/login')}
+            title="Admin"
+            style={{
+              padding: '8px 12px',
+              borderRadius: '8px',
+              fontSize: '16px',
+              fontWeight: '400',
+              color: '#d1d5db',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              textDecoration: 'none',
+              border: '1px solid transparent',
+              background: 'rgba(255,255,255,0.4)',
+              fontFamily: "'Sarabun', sans-serif",
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: '0.6'
+            }}
+          >
+            🔐
+          </button>
+        </div>
+
+        {/* Mobile Hamburger Button */}
         <button
-          className="nav-link"
-          onClick={() => onShowProfileModal && onShowProfileModal()}
-          style={{
-            padding: '10px 16px',
-            borderRadius: '12px',
-            fontSize: '14px',
-            fontWeight: '500',
-            color: settings.nav_text_color,
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            textDecoration: 'none',
-            border: '1px solid transparent',
-            background: 'rgba(255,255,255,0.9)',
-            fontFamily: "'Sarabun', sans-serif",
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}
+          className="nav-hamburger"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          style={{ display: 'none' }}
         >
+          ☰
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`} style={{ display: 'none' }}>
+        <a href="#announcements" onClick={() => setIsMobileMenuOpen(false)}>📢 ประกาศ</a>
+        <a href="#contents" onClick={() => setIsMobileMenuOpen(false)}>📚 เนื้อหา</a>
+        <a href="#gallery" onClick={() => setIsMobileMenuOpen(false)}>🖼️ Gallery</a>
+        <a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>📞 ติดต่อ</a>
+        <button onClick={() => { onShowProfileModal && onShowProfileModal(); setIsMobileMenuOpen(false); }}>
           👤 โปรไฟล์ครู
         </button>
-        <button
-          className="nav-btn"
-          onClick={() => activeRouter.push('/student')}
-          style={{
-            padding: '10px 22px',
-            borderRadius: '14px',
-            fontSize: '14px',
-            fontWeight: '600',
-            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-            color: '#fff',
-            cursor: 'pointer',
-            border: 'none',
-            fontFamily: "'Sarabun', sans-serif",
-            transition: 'all 0.2s',
-            boxShadow: '0 4px 12px rgba(99,102,241,0.35)',
-            minWidth: '190px'
-          }}
-        >
+        <button className="nav-btn" onClick={() => { activeRouter.push('/student'); setIsMobileMenuOpen(false); }}>
           🔍 ตรวจสอบผลการเรียน
         </button>
-        <button
-          className="nav-secret-btn"
-          onClick={() => activeRouter.push('/admin/login')}
-          title="Admin"
-          style={{
-            padding: '8px 12px',
-            borderRadius: '8px',
-            fontSize: '16px',
-            fontWeight: '400',
-            color: '#d1d5db',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            textDecoration: 'none',
-            border: '1px solid transparent',
-            background: 'rgba(255,255,255,0.4)',
-            fontFamily: "'Sarabun', sans-serif",
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            opacity: '0.6'
-          }}
-        >
-          🔐
-        </button>
       </div>
-    </div>
+    </>
   )
 }
 

@@ -41,6 +41,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <style>{`
         .layout { display: flex; min-height: 100vh; }
         .main { margin-left: 240px; padding: 32px; flex: 1; min-height: 100vh; }
+        
+        @media (max-width: 768px) {
+          .main { margin-left: 0; padding: 80px 20px 32px; }
+        }
       `}</style>
 
       <div className="layout">

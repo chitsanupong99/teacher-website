@@ -17,6 +17,7 @@ export default function AdminSidebar({ activePath }: AdminSidebarProps) {
   const router = useRouter()
   const [settings, setSettings] = useState<SiteSettings | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     fetchSettings()
@@ -128,7 +129,18 @@ export default function AdminSidebar({ activePath }: AdminSidebarProps) {
           display: flex; flex-direction: column;
           padding: 24px 16px; position: fixed;
           top: 0; left: 0; height: 100vh; overflow-y: auto;
-          z-index: 100;
+          z-index: 100; transition: transform 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+          .sidebar {
+            transform: translateX(-100%);
+            width: 240px;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+          }
+          .sidebar.open {
+            transform: translateX(0);
+          }
         }
 
         .logo { display: flex; align-items: center; gap: 10px; padding: 0 8px; margin-bottom: 32px; }
@@ -158,9 +170,46 @@ export default function AdminSidebar({ activePath }: AdminSidebarProps) {
           transition: all 0.2s;
         }
         .logout-btn:hover { background: #fef2f2; }
+
+        .hamburger-btn {
+          display: none; position: fixed; top: 16px; left: 16px; z-index: 101;
+          background: none; border: 1px solid #e5e7eb; border-radius: 10px;
+          padding: 10px 12px; cursor: pointer; font-size: 20px;
+          width: 44px; height: 44px; align-items: center; justify-content: center;
+          transition: all 0.2s;
+        }
+        .hamburger-btn:hover { background: #f0f2ff; border-color: #6366f1; }
+
+        @media (max-width: 768px) {
+          .hamburger-btn {
+            display: flex;
+          }
+        }
+
+        .sidebar-overlay {
+          display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5);
+          z-index: 99; transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.open {
+          display: block;
+        }
+
+        @media (max-width: 768px) {
+          .sidebar-overlay.open {
+            display: block;
+          }
+        }
       `}</style>
 
-      <div className="sidebar">
+      {/* Hamburger Button */}
+      <button className="hamburger-btn" onClick={() => setIsOpen(!isOpen)}>
+        ☰
+      </button>
+
+      {/* Sidebar Overlay */}
+      <div className={`sidebar-overlay ${isOpen ? 'open' : ''}`} onClick={() => setIsOpen(false)} />
+
+      <div className={`sidebar ${isOpen ? 'open' : ''}`}>
         <div className="logo">
           {settings?.logo_url ? (
             <img src={settings.logo_url} alt="logo" className="logo-img" />
@@ -177,7 +226,10 @@ export default function AdminSidebar({ activePath }: AdminSidebarProps) {
               <div
                 key={itemIndex}
                 className={`nav-item ${activePath === item.path ? 'active' : ''}`}
-                onClick={() => router.push(item.path)}
+                onClick={() => {
+                  router.push(item.path)
+                  setIsOpen(false)
+                }}
               >
                 <span className="nav-icon">{item.icon}</span>
                 {item.label}

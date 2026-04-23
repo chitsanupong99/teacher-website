@@ -95,6 +95,10 @@ export default function StudentPage() {
           position: sticky; top: 0; z-index: 50;
           box-shadow: 0 4px 24px rgba(99,102,241,0.08);
         }
+        
+        @media (max-width: 768px) {
+          .navbar { padding: 0 20px; }
+        }
         .nav-logo { display: flex; align-items: center; gap: 12px; cursor: pointer; }
         .nav-logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg,#6366f1,#8b5cf6); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
         .nav-logo-text { font-family: 'Prompt', sans-serif; font-size: 18px; font-weight: 700; color: #1e1b4b; }
@@ -105,6 +109,13 @@ export default function StudentPage() {
           background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 40%, #7c3aed 100%);
           padding: 60px 40px 80px; text-align: center; color: #fff; position: relative; overflow: hidden;
         }
+        
+        @media (max-width: 768px) {
+          .hero { padding: 40px 20px 60px; }
+          .hero-icon { font-size: 40px; }
+          .hero-title { font-size: 24px; }
+          .hero-sub { font-size: 14px; }
+        }
         .hero-dots { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px); background-size: 30px 30px; pointer-events: none; }
         .hero-icon { font-size: 56px; margin-bottom: 16px; display: block; animation: float 3s ease-in-out infinite; }
         .hero-title { font-family: 'Prompt', sans-serif; font-size: 36px; font-weight: 800; margin-bottom: 8px; }
@@ -113,12 +124,20 @@ export default function StudentPage() {
         .search-wrap {
           display: flex; gap: 12px; justify-content: center; max-width: 480px; margin: 0 auto;
         }
+        
+        @media (max-width: 768px) {
+          .search-wrap { flex-direction: column; max-width: 100%; }
+        }
         .search-input {
           flex: 1; border: 2px solid rgba(255,255,255,0.3);
           border-radius: 14px; padding: 14px 20px; font-size: 16px;
           font-family: 'Sarabun', sans-serif; color: #fff;
           background: rgba(255,255,255,0.12); backdrop-filter: blur(10px);
           outline: none; transition: all 0.2s; text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+          .search-input { font-size: 15px; padding: 12px 16px; text-align: left; }
         }
         .search-input::placeholder { color: rgba(255,255,255,0.5); }
         .search-input:focus { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.18); }
@@ -127,6 +146,10 @@ export default function StudentPage() {
           background: #fff; color: #6366f1; border: none; cursor: pointer;
           font-family: 'Sarabun', sans-serif; transition: all 0.2s;
           box-shadow: 0 4px 16px rgba(0,0,0,0.2); white-space: nowrap;
+        }
+        
+        @media (max-width: 768px) {
+          .search-btn { width: 100%; padding: 12px; font-size: 14px; }
         }
         .search-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
         .search-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
@@ -139,10 +162,19 @@ export default function StudentPage() {
 
         .container { max-width: 900px; margin: 0 auto; padding: 40px 32px; }
 
+        @media (max-width: 768px) {
+          .container { padding: 32px 20px; }
+        }
+
         .student-header {
           background: #fff; border-radius: 20px; padding: 28px 32px;
           border: 1px solid #f3f4f6; box-shadow: 0 4px 20px rgba(99,102,241,0.08);
           display: flex; align-items: center; gap: 20px; margin-bottom: 24px;
+        }
+        
+        @media (max-width: 768px) {
+          .student-header { flex-direction: column; text-align: center; padding: 20px; border-radius: 16px; gap: 16px; }
+          .student-header > div:last-child { margin-left: 0; text-align: center; }
         }
         .student-avatar {
           width: 72px; height: 72px; border-radius: 20px;
@@ -156,10 +188,20 @@ export default function StudentPage() {
         .student-badge { display: inline-flex; align-items: center; gap: 6px; background: #eef2ff; color: #6366f1; padding: 4px 14px; border-radius: 100px; font-size: 13px; font-weight: 600; margin-top: 6px; }
 
         .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+        
+        @media (max-width: 768px) {
+          .summary-grid { grid-template-columns: repeat(2, 1fr); }
+        }
         .summary-card {
           background: #fff; border-radius: 16px; padding: 18px;
           border: 1px solid #f3f4f6; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
           text-align: center; transition: all 0.2s;
+        }
+        
+        @media (max-width: 768px) {
+          .summary-card { padding: 16px; border-radius: 12px; }
+          .summary-num { font-size: 22px; }
+          .summary-label { font-size: 11px; }
         }
         .summary-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.1); }
         .summary-icon { font-size: 28px; margin-bottom: 8px; }
@@ -171,6 +213,11 @@ export default function StudentPage() {
         .tab.active { background: #fff; color: #6366f1; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
         .table-wrap { background: #fff; border-radius: 16px; border: 1px solid #f3f4f6; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        
+        @media (max-width: 1024px) {
+          .table-wrap { overflow-x: auto; }
+        }
+        
         table { width: 100%; border-collapse: collapse; }
         th { background: #f8f9ff; padding: 12px 20px; text-align: left; font-size: 12px; font-weight: 600; color: #9ca3af; letter-spacing: 0.05em; text-transform: uppercase; }
         td { padding: 14px 20px; font-size: 14px; color: #374151; border-top: 1px solid #f3f4f6; }
@@ -184,7 +231,17 @@ export default function StudentPage() {
         .status-badge { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 100px; font-size: 13px; font-weight: 600; }
 
         .att-summary { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 16px; }
+        
+        @media (max-width: 768px) {
+          .att-summary { grid-template-columns: repeat(2, 1fr); }
+        }
         .att-card { border-radius: 12px; padding: 14px; text-align: center; border: 1.5px solid; }
+        
+        @media (max-width: 768px) {
+          .att-card { padding: 12px; border-radius: 10px; }
+          .att-num { font-size: 18px; }
+          .att-label { font-size: 11px; }
+        }
         .att-num { font-family: 'Prompt', sans-serif; font-size: 22px; font-weight: 700; }
         .att-label { font-size: 12px; margin-top: 2px; }
 
