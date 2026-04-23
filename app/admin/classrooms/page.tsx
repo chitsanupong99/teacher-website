@@ -267,6 +267,9 @@ export default function Classrooms() {
   onChange={e => setForm({ ...form, subject_id: e.target.value })}
 >
   <option value="">-- เลือกวิชา --</option>
+  {subjects.map(s => (
+  <option key={s.id} value={s.id}>{s.name}</option>
+))}
               </select>
               <div style={{ marginTop: 8, fontSize: 13, color: '#6b7280' }}>กด Ctrl/Cmd เพื่อเลือกหลายวิชา</div>
             </div>
