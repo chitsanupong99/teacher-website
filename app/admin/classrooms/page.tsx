@@ -211,7 +211,21 @@ export default function Classrooms() {
           )}          {subjects.length > 0 && (
             <div className="subject-chips">
               <span style={{ fontSize: 13, color: '#9ca3af', alignSelf: 'center' }}>วิชาทั้งหมด:</span>
-              {subjects.map(s => <span key={s.id} className="chip">{s.name}</span>)}
+              {subjects.map(s => (
+  <span key={s.id} className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+    {s.name}
+    <button
+      onClick={async () => {
+        if (!confirm(`ยืนยันการลบวิชา "${s.name}"?`)) return
+        await supabase.from('subjects').delete().eq('id', s.id)
+        fetchData()
+      }}
+      style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', fontSize: 14, lineHeight: 1, padding: 0 }}
+    >
+      ✕
+    </button>
+  </span>
+))}
             </div>
           )}
 
