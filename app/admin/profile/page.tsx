@@ -145,10 +145,37 @@ export default function ProfilePage() {
                   <div className="avatar-pos" style={{ marginTop: 4 }}>{profile.school || 'สังกัด'}</div>
                 </div>
                 {editMode && (
-                  <div className="form-group">
-                    <label className="form-label">URL รูปโปรไฟล์</label>
-                    <input className="form-input" placeholder="https://..." value={profile.image_url} onChange={e => setProfile({ ...profile, image_url: e.target.value })} />
-                  </div>
+                  <div>
+  <input
+    type="file"
+    accept=".jpg,.jpeg,.png,.webp"
+    style={{ display: 'none' }}
+    id="profile-upload"
+    onChange={async (e) => {
+      const file = e.target.files?.[0]
+      if (!file) return
+      const fileExt = file.name.split('.').pop()
+      const fileName = `profile_${Date.now()}.${fileExt}`
+      const { error } = await supabase.storage.from('logo').upload(fileName, file)
+      if (error) { alert('อัปโหลดไม่สำเร็จ: ' + error.message); return }
+      const { data: urlData } = supabase.storage.from('logo').getPublicUrl(fileName)
+      setProfile({ ...profile, image_url: urlData.publicUrl })
+    }}
+  />
+  <label htmlFor="profile-upload" style={{
+    display: 'flex', flexDirection: 'column', alignItems: 'center',
+    gap: 8, padding: '16px', border: '2px dashed #e5e7eb',
+    borderRadius: 12, cursor: 'pointer', background: '#fafafa'
+  }}>
+    {profile.image_url
+      ? <img src={profile.image_url} style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover' }} />
+      : <div style={{ fontSize: 32 }}>📷</div>
+    }
+    <div style={{ fontSize: 13, color: '#6366f1', fontWeight: 500 }}>
+      คลิกเพื่ออัปโหลดรูปโปรไฟล์
+    </div>
+  </label>
+</div>
                 )}
               </div>
 
